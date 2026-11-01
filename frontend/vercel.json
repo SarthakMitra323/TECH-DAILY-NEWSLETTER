@@ -1,7 +1,0 @@
-{
-  "build": {
-    "env": {
-      "NEWSLETTER_API_URL": "@NEWSLETTER_API_URL"
-    }
-  }
-}
