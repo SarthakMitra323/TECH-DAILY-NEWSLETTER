@@ -1,9 +1,8 @@
-window.NEWSLETTER_API_URL = process.env.NEWSLETTER_API_URL;
 const form = document.querySelector('#subscribe-form');
 const frequency = form.querySelector('[name="frequency"]');
 const weeklyDay = form.querySelector('.weekly-day');
 const formStatus = form.querySelector('.form-status');
-const apiBase = (window.NEWSLETTER_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+const apiBase = 'https://tech-daily-newsletter-api.onrender.com';
 
 frequency.addEventListener('change', () => {
   weeklyDay.hidden = frequency.value !== 'weekly';
