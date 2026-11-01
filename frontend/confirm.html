@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Confirm subscription — Tech / Daily</title><link rel="stylesheet" href="styles.css"></head>
+<body><main class="confirmation"><p class="eyebrow">TECH / DAILY</p><h1 id="message">Confirming your briefing…</h1><a class="text-link" href="/">Back to Tech / Daily <span aria-hidden="true">↗</span></a></main><script>
+const message = document.querySelector('#message');
+const token = new URLSearchParams(location.search).get('token');
+if (!token) message.textContent = 'This confirmation link is invalid.';
+else fetch(`http://localhost:8000/api/confirm?token=${encodeURIComponent(token)}`)
+  .then(async response => { const body = await response.json(); if (!response.ok) throw new Error(body.detail); return body; })
+  .then(body => { message.textContent = body.message; })
+  .catch(error => { message.textContent = error.message || 'This confirmation link is invalid or expired.'; });
+</script></body>
+</html>
