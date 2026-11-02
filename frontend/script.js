@@ -2,7 +2,9 @@ const form = document.querySelector('#subscribe-form');
 const frequency = form.querySelector('[name="frequency"]');
 const weeklyDay = form.querySelector('.weekly-day');
 const formStatus = form.querySelector('.form-status');
-const apiBase = 'https://tech-daily-newsletter-api.onrender.com';
+const apiBase = ['localhost', '127.0.0.1'].includes(location.hostname)
+  ? 'http://localhost:8000'
+  : 'https://tech-daily-newsletter-api.onrender.com';
 
 frequency.addEventListener('change', () => {
   weeklyDay.hidden = frequency.value !== 'weekly';
@@ -22,7 +24,7 @@ form.addEventListener('submit', async (event) => {
     });
     const body = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(body.detail || 'We could not save your subscription.');
-    formStatus.textContent = 'You are all set — your briefing is on its way.';
+    formStatus.textContent = 'Check your inbox to confirm your subscription.';
     form.reset();
     weeklyDay.hidden = true;
   } catch (error) {
