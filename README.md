@@ -60,8 +60,9 @@ frontend/
    python -m http.server 5500 --directory frontend
    ```
 
-7. Open <http://localhost:5500>. The frontend expects the API at
-   `http://localhost:8000` by default.
+7. Open <http://localhost:5500>. The frontend uses
+   `http://localhost:8000` automatically when served locally and the
+   production API URL when deployed.
 
 ## Configuration
 
@@ -172,9 +173,10 @@ For a Render Static Site:
 5. Set the deployed frontend origin in the backend's `ALLOWED_ORIGINS`.
 6. Set the same public frontend URL in `FRONTEND_URL`.
 
-The confirmation page currently uses the local API URL in its inline script.
-Before production frontend deployment, replace it with the deployed API URL
-and redeploy the static site.
+The frontend automatically uses the local API URL on localhost and the
+production API URL on a deployed site. After deployment, verify that
+`FRONTEND_URL` points to the deployed frontend so confirmation links activate
+the subscription.
 
 ### 5. Scheduler deployment choices
 
