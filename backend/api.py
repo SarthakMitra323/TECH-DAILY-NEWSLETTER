@@ -94,11 +94,26 @@ async def security_middleware(request: Request, call_next):
     return response
 
 
-allowed_origins = [
-    origin.strip().rstrip("/")
-    for origin in os.getenv("ALLOWED_ORIGINS", "").split(",")
-    if origin.strip()
-]
+def _configured_origins() -> list[str]:
+    configured = os.getenv("ALLOWED_ORIGINS", "")
+    frontend_url = os.getenv("FRONTEND_URL", "")
+    origins = [
+        origin.strip().rstrip("/")
+        for origin in configured.split(",")
+        if origin.strip()
+    ]
+
+    # FRONTEND_URL is already required for confirmation links and provides a
+    # reliable CORS fallback when ALLOWED_ORIGINS was not added separately.
+    if frontend_url.strip():
+        frontend_origin = frontend_url.strip().rstrip("/")
+        if frontend_origin not in origins:
+            origins.append(frontend_origin)
+
+    return origins
+
+
+allowed_origins = _configured_origins()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
