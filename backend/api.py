@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from threading import Event, Thread
 from typing import Literal
+from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import firebase_admin
@@ -97,16 +98,28 @@ async def security_middleware(request: Request, call_next):
 def _configured_origins() -> list[str]:
     configured = os.getenv("ALLOWED_ORIGINS", "")
     frontend_url = os.getenv("FRONTEND_URL", "")
-    origins = [
-        origin.strip().rstrip("/")
-        for origin in configured.split(",")
-        if origin.strip()
-    ]
+
+    def normalize_origin(value: str) -> str:
+        value = value.strip().rstrip("/")
+        parsed = urlsplit(value)
+        if not parsed.scheme or not parsed.netloc or parsed.path not in {"", "/"}:
+            raise RuntimeError(
+                "CORS origins must be complete origins such as "
+                "'https://example.com', without a path."
+            )
+        return f"{parsed.scheme}://{parsed.netloc}"
+
+    origins = []
+    for configured_origin in configured.split(","):
+        if configured_origin.strip():
+            origin = normalize_origin(configured_origin)
+            if origin not in origins:
+                origins.append(origin)
 
     # FRONTEND_URL is already required for confirmation links and provides a
     # reliable CORS fallback when ALLOWED_ORIGINS was not added separately.
     if frontend_url.strip():
-        frontend_origin = frontend_url.strip().rstrip("/")
+        frontend_origin = normalize_origin(frontend_url)
         if frontend_origin not in origins:
             origins.append(frontend_origin)
 
@@ -118,8 +131,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=False,
-    allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Accept"],
 )
 
 

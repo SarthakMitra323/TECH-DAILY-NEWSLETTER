@@ -75,7 +75,7 @@ Important values:
 | `NEWS_EMAIL_ADDRESS` | SMTP sender address |
 | `NEWS_EMAIL_APP_PASSWORD` | SMTP app password stored as a secret |
 | `FIREBASE_SERVICE_ACCOUNT_JSON` | Firebase Admin credentials stored as a secret |
-| `ALLOWED_ORIGINS` | Comma-separated exact browser origins allowed by CORS; `FRONTEND_URL` is used as a fallback |
+| `ALLOWED_ORIGINS` | Comma-separated exact browser origins allowed by CORS, without paths; `FRONTEND_URL` is used as a fallback |
 | `FRONTEND_URL` | Public frontend URL used in confirmation links |
 | `ENABLE_SCHEDULER` | Starts the scheduler in the API process |
 | `RSS_FEEDS` | Comma-separated RSS feed URLs |
